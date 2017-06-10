@@ -1,0 +1,24 @@
+Answer:
+
+In our implementation, we define tile in size of 32 * 32 and each block process one tile.
+So there are 32 * 32  = 1024 threads/ 32 warps(32 threads per warp) in each block.
+And the grid size is 11 * 20 and we have 11 * 20 = 220 blocks.
+
+But according to the technical specification:
+Maximum number of blocks per SM is 16.
+Warp size is 32.
+Maximum number of threads per SM is 2048.
+So we can only launch 2 block per SM at a time.
+And each SPA has 8 SMs and we have one grid launched on the SPA.
+
+Thus the answer is 8 * 2048 = 16384 threads can be scheduled simultaneously.
+
+The info from nvcc:
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function '_Z15MatrixMulKernel6MatrixS_S_' for 'sm_30'
+ptxas info    : Function properties for _Z15MatrixMulKernel6MatrixS_S_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 25 registers, 8448 bytes smem, 392 bytes cmem[0]
+/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/crt1.o: In function `_start':
+(.text+0x20): undefined reference to `main'
+collect2: ld returned 1 exit status

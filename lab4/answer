@@ -1,0 +1,15 @@
+a.
+Processing 16777216 elements...
+Host CPU Processing time: 49.164001 (ms)
+CUDA Processing time: 5.439000 (ms)
+Speedup: 9.039162X
+Test PASSED
+
+b.
+(1) If the length of the array isn't a power of two, that means the last block will be un-full. So we find the biggest number N which sastifis: N is power of 2 and N < the size of the last lock. And process the remain part with another function.
+(2) We calculate the number of elements each bank holds and use this number as padding size. When we declear the shared memory, set its size to (2 * numThreadsLastBlock + (2 * numThreadsLastBlock) / NUM_BANKS)), this size can't be devided evenly by the number of banks. 
+
+c.
+The time complexity is O(n) for CPU and O(2n) for GPU.
+So the theoretical performance limits is 16777216/(46/1000) = 3.6*10^8 for CPU and 2*16777216/(5.518/1000) = 6*10^9 for GPU.
+The bottleneck is memory access for CPU and number of theads&blocks for GPU.

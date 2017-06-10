@@ -1,0 +1,26 @@
+a. Near the top of "scan_largearray.cu", set #define DEFAULT_NUM_ELEMENTS to 16777216. Set #define MAX_RAND to 3. Record the performance results when run without arguments, including the host CPU and GPU processing times and the speedup.
+
+
+**===-------------------------------------------------===**
+Processing 16777216 elements...
+Host CPU Processing time: 46.213001 (ms)
+CUDA Processing time: 5.427000 (ms)
+Speedup: 8.515387X
+Test PASSED
+
+
+
+b. Describe how you handled arrays not a power of two in size, and how you minimized shared memory bank conflicts. Also describe any other performance enhancing optimizations you added.
+
+(1) If the length of the array isn't a power of two, that means the last block is not full. The processing for all blocks except the last block is the same, while for the last block, we find the biggest number N which sastifis: N is power of 2 and N > the number of element in the last block, and fill zero in it. This implementation is similar to zero-padding in FFT.
+(2) We calculate the number of elements each bank holds and use this number as padding size. When we declear the shared memory, set its size to (2 * numThreadsLastBlock + (2 * numThreadsLastBlock) / NUM_BANKS)), this size can't be devided evenly by the number of banks. 
+
+
+
+
+c. How do the measured FLOPS rate for the CPU and GPU kernels compare with each other, and with the theoretical performance limits of each architecture? For your GPU implementation, discuss what bottlenecks your code is likely bound by, limiting higher performance.
+
+
+The time complexity is O(n) for CPU and O(2n) for GPU.
+So the theoretical performance limits is 16777216/(46/1000) = 3.6*10^8 for CPU and 2*16777216/(5.518/1000) = 6*10^9 for GPU.
+The bottleneck is memory access for CPU and number of theads&blocks for GPU.
