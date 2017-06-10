@@ -1,2 +1,2 @@
-# EECS-468
+# EECS 468
 Programming Massively Parallel Processors with CUDA
